@@ -52,7 +52,7 @@ dependencies {
     def fragment_version = "1.5.4"
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
 
-    // navigation component
+    // jetpack navigation architecture components
     def nav_version = "2.5.3"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
@@ -71,6 +71,9 @@ dependencies {
 
     //Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:29.0.4')
+
+    //Firebase Authentication
+    implementation 'com.google.firebase:firebase-auth'
 
     // for FireStore
     implementation 'com.google.firebase:firebase-firestore-ktx'
