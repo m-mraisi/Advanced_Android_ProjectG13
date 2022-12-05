@@ -8,17 +8,29 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
+import com.G13.group.R
 import com.G13.group.databinding.FragmentSignUpBinding
+import com.G13.group.models.User
+import com.G13.group.repository.AuthRepo
+import com.G13.group.repository.UsersRepo
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.okhttp.Dispatcher
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 
 class SignUpFragment : Fragment() {
     val TAG:String = "SIGNUP-FRAGMENT"
     private var _binding: FragmentSignUpBinding? = null
-    private lateinit var mAuth:FirebaseAuth
     private val binding get() = _binding!!
-    private var showSignUpButton = false
-
+    private lateinit var authRepo: AuthRepo
+    private lateinit var usersRepo: UsersRepo
+    var email = ""
+    var password = ""
+    var username = ""
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -27,34 +39,72 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: android.view.View, savedInstanceState: android.os.Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        authRepo = AuthRepo() // initialize AuthRepo
+        usersRepo = UsersRepo() // initialize UsersRepo
+
+        binding.btnSignUp.setOnClickListener {
+            Log.d(TAG, "SignUpFragment: SignUp Button Clicked")
+            if(validateData()){
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val userId = usersRepo.addUserToDB(User(username = username))
+                    if(userId == null){
+                        Toast.makeText(requireContext(), "Username already taken", Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, "SignUpFragment: failed creation!")
+                    }
+                    else{
+                        val authResult = authRepo.createAccount(requireContext(), email, password)
+                        if(authResult){
+                            saveToPrefs(email,password,username)
+                            // TODO navigate to feed screen
+                            Log.d(TAG, "SignUpFragment: success creation!")
+                        }
+
+                    }
+                }
+
+
+            }
+            else{
+                Log.d(TAG, "SignUpFragment: failed creation!")
+            }
+        }
+
+
+        binding.edtSignIn.setOnClickListener {
+            val options = navOptions {
+                anim {
+                    enter = R.anim.slide_in_right
+                    exit = R.anim.slide_out_left
+                    popEnter = R.anim.slide_in_left
+                    popExit = R.anim.slide_out_right
+                }
+            }
+            val action = SignUpFragmentDirections.actionSignUpFragmentToLoginFragment()
+            findNavController().navigate(action, options)
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        mAuth = FirebaseAuth.getInstance()
-        binding.btnSignUp.setOnClickListener {
-            Log.d(TAG, "SignUpFragment: SignUp Button Clicked")
-//            viewLifecycleOwner.lifecycleScope.launch {
-                if(validateData()){
-                    // TODO navigate to feed screen
-                    Log.d(TAG, "SignUpFragment: success creation!")
-                }
-                else{
-                    Log.d(TAG, "SignUpFragment: failed creation!")
-                }
-//            }
-        }
     }
 
     private fun validateData():Boolean {
         var validData = true
-        var email = ""
-        var password = ""
+        email = ""
+        password = ""
+        username = binding.edtUsername.text.toString()
         if (binding.edtEmail.text.toString().isEmpty()) {
             binding.edtEmail.error = "Email Cannot be Empty"
             validData = false
         } else {
             email = binding.edtEmail.text.toString()
+        }
+        if(username.isBlank()){
+            binding.edtUsername.error = "Username is invalid"
+        }
+        else if(username.contains(" ") || username.length < 4){
+            binding.edtUsername.error = "Username must be >= 8 characters and not to contain spaces"
+            validData = false
         }
         if (binding.edtPassword.text.toString().isEmpty()) {
             binding.edtPassword.error = "Password Cannot be Empty"
@@ -73,38 +123,15 @@ class SignUpFragment : Fragment() {
                 }
             }
         }
-        return if (validData) {
-            createAccount(email, password)
-        } else {
-            Toast.makeText(requireContext(), "Please provide correct inputs", Toast.LENGTH_SHORT).show()
-            false
-        }
+        return validData
     }
 
-    private fun createAccount(email: String, password: String):Boolean {
-//        SignUp using FirebaseAuth
-        var validate = false
-        mAuth.createUserWithEmailAndPassword(email,password)
-            .addOnCompleteListener {task->
-                if(task.isSuccessful){
-                    // account successfully created
-                    Log.d(TAG, "SignUpFragment: Created account successfully")
-                    saveToPrefs(email, password)
-                    validate = true
-                }
-                else{
-                    // Failed to create account
-                    Log.d(TAG,"SignUpFragment:  ${task.exception}")
-                    Toast.makeText(requireContext(), "${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        return validate
-    }
-
-    private fun saveToPrefs(email: String, password: String) {
+    private fun saveToPrefs(email: String, password: String, username:String) {
         Log.d(TAG, "SignUpFragment: Saving to prefs")
         val prefs = requireContext().getSharedPreferences(requireContext().toString(), AppCompatActivity.MODE_PRIVATE)
         prefs.edit().putString("USER_EMAIL", email).apply()
         prefs.edit().putString("USER_PASSWORD", password).apply()
+        prefs.edit().putString("USERNAME", username).apply()
     }
+
 }
