@@ -81,4 +81,8 @@ dependencies {
 
     // fore liveData
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+
+    // for Task.asDeferred
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
+
 }
