@@ -24,7 +24,6 @@ class UsersRepo {
                 Log.d(TAG, "addUserToDB: User already taken")
                 return userId
             }
-            Log.d(TAG, "addUserToDB: it did not stop me! ${newUser.username}")
             val data: MutableMap<String, Any> = HashMap() // needed to store to FireStore collection
 
             data[FIELD_USERNAME] = newUser.username
@@ -66,11 +65,8 @@ class UsersRepo {
                     Log.d(TAG, "addUserToDB: Error getting documents")
                     found = true
                 }
-        Log.d(TAG, "addUserToDB: checking user 2")
         val deferredDataSnapshot: kotlinx.coroutines.Deferred<QuerySnapshot> = task.asDeferred()
-        Log.d(TAG, "addUserToDB: checking user 3")
         val data: QuerySnapshot = deferredDataSnapshot.await()
-        Log.d(TAG, "addUserToDB: checking user 4")
         return found
     }
 }
