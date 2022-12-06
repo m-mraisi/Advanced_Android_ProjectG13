@@ -31,6 +31,7 @@ class SignUpFragment : Fragment() {
     var email = ""
     var password = ""
     var username = ""
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -132,6 +133,12 @@ class SignUpFragment : Fragment() {
         prefs.edit().putString("USER_EMAIL", email).apply()
         prefs.edit().putString("USER_PASSWORD", password).apply()
         prefs.edit().putString("USERNAME", username).apply()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
 }
