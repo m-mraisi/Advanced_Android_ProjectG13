@@ -57,17 +57,16 @@ class SignUpFragment : Fragment() {
                         ).show()
                         Log.d(TAG, "SignUpFragment: failed creation!")
                     } else {
+                        Log.d(TAG, "SignUpFragment: user created successfully!")
                         val authResult = authRepo.createAccount(requireContext(), email, password)
+                        Log.d(TAG, "SignUpFragment: authResult $authResult")
                         if (authResult) {
                             saveToPrefs(email, password, username)
                             // TODO navigate to feed screen
                             Log.d(TAG, "SignUpFragment: success creation!")
                         }
-
                     }
                 }
-
-
             } else {
                 Log.d(TAG, "SignUpFragment: failed creation!")
             }
