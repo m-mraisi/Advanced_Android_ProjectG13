@@ -9,7 +9,7 @@
         android:id="@+id/boardingFragment"
         android:name="com.G13.group.fragments.BoardingFragment"
         android:label="fragment_boarding"
-        tools:layout="@layout/fragment_boarding" >
+        tools:layout="@layout/fragment_boarding">
         <action
             android:id="@+id/action_boardingFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
@@ -21,7 +21,7 @@
         android:id="@+id/signUpFragment"
         android:name="com.G13.group.fragments.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up">
         <action
             android:id="@+id/action_signUpFragment_to_loginFragment"
             app:destination="@id/loginFragment" />

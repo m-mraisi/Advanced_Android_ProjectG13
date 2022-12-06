@@ -16,14 +16,11 @@ import com.G13.group.databinding.FragmentSignUpBinding
 import com.G13.group.models.User
 import com.G13.group.repository.AuthRepo
 import com.G13.group.repository.UsersRepo
-import com.google.firebase.auth.FirebaseAuth
-import com.squareup.okhttp.Dispatcher
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 
 class SignUpFragment : Fragment() {
-    val TAG:String = "SIGNUP-FRAGMENT"
+    val TAG: String = "SIGNUP-FRAGMENT"
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
     private lateinit var authRepo: AuthRepo
@@ -32,7 +29,11 @@ class SignUpFragment : Fragment() {
     var password = ""
     var username = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
@@ -45,27 +46,28 @@ class SignUpFragment : Fragment() {
 
         binding.btnSignUp.setOnClickListener {
             Log.d(TAG, "SignUpFragment: SignUp Button Clicked")
-            if(validateData()){
+            if (validateData()) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     val userId = usersRepo.addUserToDB(User(username = username))
-                    if(userId == null){
-                        Toast.makeText(requireContext(), "Username already taken", Toast.LENGTH_SHORT).show()
+                    if (userId == null) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Username already taken",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         Log.d(TAG, "SignUpFragment: failed creation!")
-                    }
-                    else{
+                    } else {
+                        Log.d(TAG, "SignUpFragment: user created successfully!")
                         val authResult = authRepo.createAccount(requireContext(), email, password)
-                        if(authResult){
-                            saveToPrefs(email,password,username)
+                        Log.d(TAG, "SignUpFragment: authResult $authResult")
+                        if (authResult) {
+                            saveToPrefs(email, password, username)
                             // TODO navigate to feed screen
                             Log.d(TAG, "SignUpFragment: success creation!")
                         }
-
                     }
                 }
-
-
-            }
-            else{
+            } else {
                 Log.d(TAG, "SignUpFragment: failed creation!")
             }
         }
@@ -89,7 +91,7 @@ class SignUpFragment : Fragment() {
         super.onResume()
     }
 
-    private fun validateData():Boolean {
+    private fun validateData(): Boolean {
         var validData = true
         email = ""
         password = ""
@@ -100,10 +102,9 @@ class SignUpFragment : Fragment() {
         } else {
             email = binding.edtEmail.text.toString()
         }
-        if(username.isBlank()){
+        if (username.isBlank()) {
             binding.edtUsername.error = "Username is invalid"
-        }
-        else if(username.contains(" ") || username.length < 4){
+        } else if (username.contains(" ") || username.length < 4) {
             binding.edtUsername.error = "Username must be >= 8 characters and not to contain spaces"
             validData = false
         }
@@ -127,9 +128,12 @@ class SignUpFragment : Fragment() {
         return validData
     }
 
-    private fun saveToPrefs(email: String, password: String, username:String) {
+    private fun saveToPrefs(email: String, password: String, username: String) {
         Log.d(TAG, "SignUpFragment: Saving to prefs")
-        val prefs = requireContext().getSharedPreferences(requireContext().toString(), AppCompatActivity.MODE_PRIVATE)
+        val prefs = requireContext().getSharedPreferences(
+            requireContext().toString(),
+            AppCompatActivity.MODE_PRIVATE
+        )
         prefs.edit().putString("USER_EMAIL", email).apply()
         prefs.edit().putString("USER_PASSWORD", password).apply()
         prefs.edit().putString("USERNAME", username).apply()
