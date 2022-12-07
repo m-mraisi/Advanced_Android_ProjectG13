@@ -1,6 +1,5 @@
 package com.G13.group.repository
 
-import com.G13.group.models.Comment
 import com.G13.group.models.Post
 
 open class DataSource {
@@ -20,7 +19,7 @@ open class DataSource {
     }
 
     var dataSourcePostsArrayList: ArrayList<Post> = arrayListOf()
-    var dataSourceCommentsArrayList: ArrayList<Comment> = arrayListOf()
+    var username = "user1"
 
 //    var selectedLessonPosition:Int? = null
 

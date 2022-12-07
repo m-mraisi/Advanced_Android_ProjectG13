@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.G13.group.models.Comment
 import com.G13.group.models.Post
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -43,5 +44,22 @@ class CommentsRepo {
 
         val deferredDataSnapshot: Deferred<DocumentSnapshot> = task.asDeferred()
         val data: DocumentSnapshot = deferredDataSnapshot.await()
+    }
+
+    suspend fun addComment(post: Post) {
+        try {
+            val task: Task<Void> =
+                db.collection(COLLECTION_NAME).document(post.id).set(post).addOnSuccessListener {
+                    Log.d(TAG, "add - added comment - new comments size ${post.comments.size}")
+                }.addOnFailureListener { ex ->
+                    Log.d(TAG, "addComment: $ex")
+                }
+            val deferredDataSnapshot: Deferred<Void> =
+                task.asDeferred()
+            val result: Void = deferredDataSnapshot.await()
+
+        } catch (ex: Exception) {
+            Log.e(TAG, "addUserToDB: $ex")
+        }
     }
 }
