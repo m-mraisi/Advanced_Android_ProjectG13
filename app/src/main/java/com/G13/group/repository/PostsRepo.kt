@@ -3,20 +3,16 @@ package com.G13.group.repository
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.G13.group.interfaces.IOnCommentListener
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Post
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.tasks.asDeferred
 
 class PostsRepo(
     private val clickListener: IOnPostsListener,
-    private val commentListener: IOnCommentListener
 ) {
-    private val TAG = this.toString()
+    private val TAG = "POSTS_REPO"
     private val db = Firebase.firestore
     private val COLLECTION_NAME = "posts"
     private val FIELD_USERNAME = "username"
@@ -58,7 +54,6 @@ class PostsRepo(
                                     DataSource.getInstance().dataSourcePostsArrayList
                                 dataSourceArrayList.add(currentPost)
                                 clickListener.postsDataChangeListener()
-                                commentListener.commentsChangeListener()
                             }
                             DocumentChange.Type.MODIFIED -> {
                                 var dataSourceArrayList: ArrayList<Post> =
@@ -82,7 +77,6 @@ class PostsRepo(
                                     }
                                 }
                                 clickListener.postsDataChangeListener()
-                                commentListener.commentsChangeListener()
                             }
                             DocumentChange.Type.REMOVED -> {
                                 postsArrayList.remove(currentPost)
@@ -90,7 +84,6 @@ class PostsRepo(
                                     DataSource.getInstance().dataSourcePostsArrayList
                                 dataSourceArrayList.remove(currentPost)
                                 clickListener.postsDataChangeListener()
-                                commentListener.commentsChangeListener()
 
                             }
                         }
@@ -107,17 +100,6 @@ class PostsRepo(
         }
     }
 
-    suspend fun getPostComments(post: Post) {
 
-        val docRef = db.collection(COLLECTION_NAME).document(post.id)
-        val task = docRef.get().addOnSuccessListener {
-            Log.d(TAG, "getPostComments: ${it.data}")
-        }.addOnFailureListener { ex ->
-            Log.e(TAG, "getPostComments: $ex")
-        }
-
-        val deferredDataSnapshot: Deferred<DocumentSnapshot> = task.asDeferred()
-        val data: DocumentSnapshot = deferredDataSnapshot.await()
-    }
 
 }

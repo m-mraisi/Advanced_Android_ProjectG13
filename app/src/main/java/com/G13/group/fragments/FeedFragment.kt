@@ -13,14 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.G13.group.R
 import com.G13.group.adapters.PostsAdapter
 import com.G13.group.databinding.FragmentFeedBinding
-import com.G13.group.interfaces.IOnCommentListener
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Post
 import com.G13.group.repository.DataSource
 import com.G13.group.repository.PostsRepo
 
 
-class FeedFragment : Fragment(), IOnPostsListener, IOnCommentListener {
+class FeedFragment : Fragment(), IOnPostsListener {
     val TAG: String = "FEED-FRAGMENT"
     private var _binding: FragmentFeedBinding? = null
     private val binding get() = _binding!!
@@ -44,11 +43,8 @@ class FeedFragment : Fragment(), IOnPostsListener, IOnCommentListener {
         super.onViewCreated(view, savedInstanceState)
         dataSource = DataSource.getInstance()
 
-
-        postsRepo = PostsRepo(this, this)
         postArrayList = dataSource.dataSourcePostsArrayList
-        postArrayList.clear()
-        postsRepo.syncPosts()
+        Log.d(TAG, "postArrayList size at first: ${postArrayList.size}")
 
         // Create the adapter to convert the array to views
         postAdapter = PostsAdapter(requireContext(), postArrayList, this)
@@ -68,11 +64,15 @@ class FeedFragment : Fragment(), IOnPostsListener, IOnCommentListener {
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
 
+        postArrayList.clear()
 
+        postsRepo = PostsRepo(this)
+
+
+        postsRepo.syncPosts()
     }
 
     override fun onDestroy() {
@@ -94,22 +94,16 @@ class FeedFragment : Fragment(), IOnPostsListener, IOnCommentListener {
 
         val action = FeedFragmentDirections.actionFeedFragmentToCommentsFragment(post)
         findNavController().navigate(action, options)
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun postsDataChangeListener() {
         Log.d(TAG, "Notified the adapter: ${dataSource.dataSourcePostsArrayList.size}")
+        postArrayList = dataSource.dataSourcePostsArrayList
+        Log.d(TAG, "postArrayList size: ${postArrayList.size}")
         postAdapter?.notifyDataSetChanged()
     }
 
-    override fun addCommentClickListener() {
-        //TODO("Not yet implemented")
-    }
-
-    override fun commentsChangeListener() {
-        //TODO("Not yet implemented")
-    }
 
 
 }
