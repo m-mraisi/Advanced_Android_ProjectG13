@@ -1,6 +1,8 @@
 package com.G13.group.models
 
-data class Comment(var comment: String = "", var username: String = "") {
+import java.io.Serializable
+
+data class Comment(var comment: String = "", var username: String = "") : Serializable {
     override fun toString(): String {
         return "Comment(comment='$comment', username='$username')"
     }

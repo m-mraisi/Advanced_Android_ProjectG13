@@ -1,18 +1,20 @@
 package com.G13.group.fragments
 
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.G13.group.adapters.CommentsAdapter
+import com.G13.group.databinding.AddCommentDialogBinding
 import com.G13.group.databinding.FragmentCommentsBinding
-import com.G13.group.interfaces.IOnCommentListener
 import com.G13.group.models.Comment
 import com.G13.group.models.Post
 import com.G13.group.repository.CommentsRepo
@@ -20,7 +22,7 @@ import com.G13.group.repository.DataSource
 import kotlinx.coroutines.launch
 
 
-class CommentsFragment : Fragment(), IOnCommentListener {
+class CommentsFragment : Fragment() {
     val TAG: String = "COMMENTS-FRAGMENT"
     private var _binding: FragmentCommentsBinding? = null
     private val binding get() = _binding!!
@@ -55,17 +57,13 @@ class CommentsFragment : Fragment(), IOnCommentListener {
         Log.d(TAG, "onViewCreated started")
 
         dataSource = DataSource.getInstance()
-        commentsRepo = CommentsRepo()
 
         commentsArrayList = arrayListOf<Comment>()
 
-        commentAdapter = CommentsAdapter(view.context, commentsArrayList, this)
+        commentAdapter = CommentsAdapter(view.context, commentsArrayList)
         binding.rvComments.layoutManager = LinearLayoutManager(view.context)
         binding.rvComments.adapter = commentAdapter
 
-        binding.btnAddComment.setOnClickListener {
-            addComment()
-        }
     }
 
     override fun onDestroy() {
@@ -77,9 +75,9 @@ class CommentsFragment : Fragment(), IOnCommentListener {
     override fun onResume() {
         super.onResume()
 
+        commentsRepo = CommentsRepo()
         commentsArrayList.clear()
 
-        val postArrayList = dataSource.dataSourcePostsArrayList
         viewLifecycleOwner.lifecycleScope.launch {
             commentsRepo.getPostComments(selectedPost)
             commentsRepo.allComments.observe(requireActivity()) { comments ->
@@ -93,23 +91,35 @@ class CommentsFragment : Fragment(), IOnCommentListener {
             }
         }
 
-    }
+        binding.btnAddComment.setOnClickListener {
+            addComment()
+        }
 
-    private fun addComment() {
-        // add comment
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun commentsChangeListener() {
-        val postArrayList = dataSource.dataSourcePostsArrayList
-        Log.d(TAG, "added a comment: $postArrayList")
-        for (post in postArrayList) {
-            if (post.id == selectedPost.id) {
-                Log.d(TAG, "found it : ${post.comments}")
-                commentsArrayList = post.comments
+    private fun addComment() {
+        // add comment
+        val dialogBinding = AddCommentDialogBinding.inflate(layoutInflater)
+        val addDialog = AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .setPositiveButton("Add") { dialog, which ->
+                val comment = dialogBinding.edtComment.text.toString().trim()
+                if (comment.isBlank()) {
+                    dialogBinding.edtComment.error = "Please insert a comment to add"
+                    return@setPositiveButton
+                } else {
+                    commentsArrayList.add(Comment(comment, dataSource.username))
+                    selectedPost.comments = commentsArrayList
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        commentsRepo.addComment(selectedPost)
+                    }
+                    commentAdapter?.notifyDataSetChanged()
+                }
             }
-        }
-        commentAdapter?.notifyDataSetChanged()
+            .setNegativeButton("Cancel", null)
+            .create()
+        addDialog.show()
     }
 
 }
