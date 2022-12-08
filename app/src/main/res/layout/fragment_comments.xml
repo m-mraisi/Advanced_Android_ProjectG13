@@ -9,8 +9,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_comments"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/btn_add_comment"
+        android:layout_height="635dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,13 +19,15 @@
         android:id="@+id/btn_add_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/light_blue"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
         android:padding="10dp"
         android:text="Add Comment"
+        android:backgroundTint="#FF6A66"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_comments" />
+        app:layout_constraintTop_toBottomOf="@+id/rv_comments" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

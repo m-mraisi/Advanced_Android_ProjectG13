@@ -2,7 +2,6 @@ package com.G13.group.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Post
 import com.google.firebase.firestore.*
@@ -21,8 +20,7 @@ class PostsRepo(
     private val FIELD_IMAGE_ID = "imageId"
     private val FIELD_COMMENT = "comment"
 
-    var allPosts: MutableLiveData<List<Post>> =
-        MutableLiveData<List<Post>>() // for multiple objects
+
 
     @SuppressLint("CheckResult")
     fun syncPosts() {
@@ -53,7 +51,7 @@ class PostsRepo(
                                 var dataSourceArrayList: ArrayList<Post> =
                                     DataSource.getInstance().dataSourcePostsArrayList
                                 dataSourceArrayList.add(currentPost)
-                                clickListener.postsDataChangeListener()
+                                //clickListener.postsDataChangeListener()
                             }
                             DocumentChange.Type.MODIFIED -> {
                                 var dataSourceArrayList: ArrayList<Post> =
@@ -70,26 +68,28 @@ class PostsRepo(
                                     )
                                     if (post.id == documentChange.document.id) {
                                         Log.d(TAG, "SyncPosts: found a an id to modify")
-                                        dataSourceArrayList[i] =
-                                            documentChange.document.toObject(Post::class.java)
+                                        dataSourceArrayList[i].comments =
+                                            documentChange.document.toObject(Post::class.java).comments
+                                        dataSourceArrayList[i].caption =
+                                            documentChange.document.toObject(Post::class.java).caption
                                     } else {
                                         Log.d(TAG, "SyncPosts: did not find the post")
                                     }
                                 }
-                                clickListener.postsDataChangeListener()
                             }
                             DocumentChange.Type.REMOVED -> {
                                 postsArrayList.remove(currentPost)
                                 var dataSourceArrayList: ArrayList<Post> =
                                     DataSource.getInstance().dataSourcePostsArrayList
                                 dataSourceArrayList.remove(currentPost)
-                                clickListener.postsDataChangeListener()
+                                //clickListener.postsDataChangeListener()
 
                             }
                         }
+
+                        clickListener.postsDataChangeListener()
                     }
                     Log.d(TAG, "SyncPosts: $postsArrayList")
-                    allPosts.postValue(postsArrayList)
                 } else {
                     Log.d(TAG, "SyncPosts: No documents received from collection $COLLECTION_NAME")
                 }

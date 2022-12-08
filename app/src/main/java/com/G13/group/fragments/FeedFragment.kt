@@ -35,12 +35,7 @@ class FeedFragment : Fragment(), IOnPostsListener {
     ): View? {
         _binding = FragmentFeedBinding.inflate(inflater, container, false)
         val view = binding.root
-        return view
-    }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         dataSource = DataSource.getInstance()
 
         postArrayList = dataSource.dataSourcePostsArrayList
@@ -51,28 +46,26 @@ class FeedFragment : Fragment(), IOnPostsListener {
         binding.rvPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPosts.adapter = postAdapter
 
-//        postsRepo.allPosts.observe(requireActivity(), Observer { postsList->
-//
-//            if(postsList != null){
-//                for (post in postsList){
-//                    Log.d(TAG, "New in coming data")
-//                    postArrayList.add(post)
-//                }
-//            }
-//            postAdapter?.notifyDataSetChanged()
-//        })
+        return view
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
 
         postArrayList.clear()
-
         postsRepo = PostsRepo(this)
-
-
         postsRepo.syncPosts()
+
+        Log.d(TAG, "feeding posts")
+//        postAdapter?.notifyDataSetChanged()
+
     }
 
     override fun onDestroy() {
@@ -98,7 +91,7 @@ class FeedFragment : Fragment(), IOnPostsListener {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun postsDataChangeListener() {
-        Log.d(TAG, "Notified the adapter: ${dataSource.dataSourcePostsArrayList.size}")
+        Log.d(TAG, "Notifying the adapter: ${dataSource.dataSourcePostsArrayList.size}")
         postArrayList = dataSource.dataSourcePostsArrayList
         Log.d(TAG, "postArrayList size: ${postArrayList.size}")
         postAdapter?.notifyDataSetChanged()
