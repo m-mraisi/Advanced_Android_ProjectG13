@@ -33,7 +33,26 @@
         android:id="@+id/loginFragment"
         android:name="com.G13.group.fragments.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_feedFragment"
+            app:destination="@id/feedFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.G13.group.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_uploadPostFragment"
+            app:destination="@id/uploadPostFragment" />
+    </fragment>
     <fragment
         android:id="@+id/feedFragment"
         android:name="com.G13.group.fragments.FeedFragment"
@@ -53,4 +72,9 @@
             app:argType="com.G13.group.models.Post"
             app:nullable="true" />
     </fragment>
+    <fragment
+        android:id="@+id/uploadPostFragment"
+        android:name="com.G13.group.fragments.UploadPostFragment"
+        android:label="fragment_upload_post"
+        tools:layout="@layout/fragment_upload_post" />
 </navigation>

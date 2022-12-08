@@ -85,7 +85,7 @@
         android:layout_marginBottom="64dp"
         android:backgroundTint="@color/light_blue"
         android:enabled="true"
-        android:text="@string/action_sign_in"
+        android:text="@string/action_sign_up"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
