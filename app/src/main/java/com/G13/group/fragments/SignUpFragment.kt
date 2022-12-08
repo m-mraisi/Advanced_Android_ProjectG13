@@ -15,6 +15,7 @@ import com.G13.group.R
 import com.G13.group.databinding.FragmentSignUpBinding
 import com.G13.group.models.User
 import com.G13.group.repository.AuthRepo
+import com.G13.group.repository.DataSource
 import com.G13.group.repository.UsersRepo
 import kotlinx.coroutines.launch
 
@@ -25,6 +26,7 @@ class SignUpFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var authRepo: AuthRepo
     private lateinit var usersRepo: UsersRepo
+    private lateinit var datasource: DataSource
     var email = ""
     var password = ""
     var username = ""
@@ -36,6 +38,7 @@ class SignUpFragment : Fragment() {
     ): View? {
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
         val view = binding.root
+        datasource = DataSource.getInstance()
         return view
     }
 
@@ -48,22 +51,32 @@ class SignUpFragment : Fragment() {
             Log.d(TAG, "SignUpFragment: SignUp Button Clicked")
             if (validateData()) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    val userId = usersRepo.addUserToDB(User(username = username))
-                    if (userId == null) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Username already taken",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        Log.d(TAG, "SignUpFragment: failed creation!")
-                    } else {
-                        Log.d(TAG, "SignUpFragment: user created successfully!")
-                        val authResult = authRepo.createAccount(requireContext(), email, password)
-                        Log.d(TAG, "SignUpFragment: authResult $authResult")
-                        if (authResult) {
+                    val userUIDFromAuth = authRepo.createAccount(requireContext(), email, password)
+                    if (userUIDFromAuth != null) {
+                        val userId =
+                            usersRepo.addUserToDB(User(id = userUIDFromAuth, username = username))
+                        if (userId == null) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Username already taken",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
                             saveToPrefs(email, password, username)
-                            // TODO navigate to feed screen
                             Log.d(TAG, "SignUpFragment: success creation!")
+                            // navigate to feed screen
+
+                            val options = navOptions {
+                                anim {
+                                    enter = R.anim.slide_in_right
+                                    exit = R.anim.slide_out_left
+                                    popEnter = R.anim.slide_in_left
+                                    popExit = R.anim.slide_out_right
+                                }
+                            }
+                            val action =
+                                SignUpFragmentDirections.actionSignUpFragmentToFeedFragment()
+                            findNavController().navigate(action, options)
                         }
                     }
                 }
@@ -134,6 +147,7 @@ class SignUpFragment : Fragment() {
             requireContext().toString(),
             AppCompatActivity.MODE_PRIVATE
         )
+        datasource.username = username
         prefs.edit().putString("USER_EMAIL", email).apply()
         prefs.edit().putString("USER_PASSWORD", password).apply()
         prefs.edit().putString("USERNAME", username).apply()
