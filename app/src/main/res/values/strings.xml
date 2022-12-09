@@ -22,4 +22,6 @@
     <string name="feed">Feed</string>
     <string name="profile">Profile</string>
     <string name="upload_post">Upload Post</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="caption">Caption</string>
 </resources>
