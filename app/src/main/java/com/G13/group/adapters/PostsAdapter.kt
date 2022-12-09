@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.G13.group.databinding.PostItemBinding
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Post
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+
 
 class PostsAdapter(
     private val context: Context,
@@ -19,6 +20,7 @@ class PostsAdapter(
 
     internal val TAG = "PostsAdapter"
 
+
     class PostViewHolder(val binding: PostItemBinding) : RecyclerView.ViewHolder(binding.root) {
         internal val TAG = "PostsAdapter"
 
@@ -27,21 +29,18 @@ class PostsAdapter(
             // associate individual view with data
             binding.tvUsername.text = currentItem.username
             binding.tvCaption.text = currentItem.caption
-            binding.tvComments.text = "View all ${currentItem.comments.size} comments"
-            Picasso.get().load(currentItem.imageId).into(binding.imgPost)
+            if (currentItem.comments.size == 0) {
+                binding.tvComments.text = "Add Comment"
+            } else {
+                binding.tvComments.text = "View all ${currentItem.comments.size} comments"
+            }
 
+            Glide.with(itemView).load(currentItem.imageId).into(binding.imgPost)
 
-            // use this approach to use the object and perform the data here in the bind() function
             binding.tvComments.setOnClickListener {
                 Log.d(TAG, "bind: ${currentItem.username} selected")
                 clickListener.onCommentsClickListener(currentItem)
             }
-
-            // use this approach to send the object to MainActivity and perform the operation there
-//            binding.tvComments.setOnClickListener {
-//                clickListener.onFruitClicked(currentItem)
-//                Log.d("FruitViewHolder", "bind: ${currentItem.title} selected")
-//            }
         }
     }
 
