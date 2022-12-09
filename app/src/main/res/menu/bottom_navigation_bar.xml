@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--        Icon by <a href="https://freeicons.io/profile/4072">Piqo Team</a> on <a href="https://freeicons.io">freeicons.io</a>-->
+    <!--    Icon by <a href="https://freeicons.io/profile/4072">Piqo Team</a> on <a href="https://freeicons.io">freeicons.io</a>-->
     <item
         android:id="@+id/feedFragment"
+        android:icon="@drawable/feed"
         android:title="@string/feed" />
 
     <item
         android:id="@+id/profileFragment"
+        android:icon="@drawable/profile"
         android:title="@string/profile" />
 </menu>

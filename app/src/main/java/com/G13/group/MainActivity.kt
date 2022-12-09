@@ -1,6 +1,7 @@
 package com.G13.group
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -21,6 +22,25 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
         setupWithNavController(binding.bottomNavigationView, navController)
+
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.profileFragment -> showBottomNav()
+                R.id.feedFragment -> showBottomNav()
+                else -> hideBottomNav()
+            }
+        }
+
+    }
+
+    private fun showBottomNav() {
+        binding.bottomNavigationView.visibility = View.VISIBLE
+
+    }
+
+    private fun hideBottomNav() {
+        binding.bottomNavigationView.visibility = View.GONE
 
     }
 
