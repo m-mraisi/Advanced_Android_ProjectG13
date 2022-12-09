@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.tasks.asDeferred
 
 class AuthRepo() {
@@ -30,5 +31,29 @@ class AuthRepo() {
         val deferredDataSnapshot: kotlinx.coroutines.Deferred<AuthResult> = task.asDeferred()
         val data: AuthResult = deferredDataSnapshot.await()
         return userUID
+    }
+
+    suspend fun signIn(context: Context, email: String, password: String): Boolean {
+        var validate = false
+        try {
+            val task: Task<AuthResult> = mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        validate = true
+                    } else {
+                        Toast.makeText(context, "Invalid email and password.", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            val deferredDataSnapshot: kotlinx.coroutines.Deferred<AuthResult> = task.asDeferred()
+            deferredDataSnapshot.await()
+        } catch (e: FirebaseAuthInvalidUserException) {
+            Log.d(TAG, "signIn: ${e.cause?.message}")
+        }
+        return validate
+    }
+
+    suspend fun getSignedInUser() {
+//        mAuth.currentUser.
     }
 }
