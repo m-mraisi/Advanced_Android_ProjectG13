@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -103,22 +104,29 @@ class FeedFragment : Fragment(), IOnPostsListener {
     }
 
     override fun onDeletePostListener(post: Post) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            var isdeleted = postsRepo.deletePost(post)
-            if (isdeleted) {
-                Toast.makeText(
-                    requireContext(),
-                    "Successfully deleted",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to delete the post",
-                    Toast.LENGTH_SHORT
-                ).show()
+        val addDialog = AlertDialog.Builder(requireContext())
+            .setTitle("Are you sure you want to delete your post")
+            .setPositiveButton("Delete") { dialog, which ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    var isdeleted = postsRepo.deletePost(post)
+                    if (isdeleted) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Successfully deleted",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to delete the post",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
-        }
+            .setNegativeButton("Cancel", null)
+            .create()
+        addDialog.show()
     }
 
     override fun onAttach(context: Context) {
