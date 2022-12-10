@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.util.Log
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Post
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.tasks.asDeferred
 
 class PostsRepo(
     private val clickListener: IOnPostsListener,
@@ -19,7 +22,6 @@ class PostsRepo(
     private val FIELD_COMMENTS = "comments"
     private val FIELD_IMAGE_ID = "imageId"
     private val FIELD_COMMENT = "comment"
-
 
 
     @SuppressLint("CheckResult")
@@ -100,6 +102,21 @@ class PostsRepo(
         }
     }
 
-
+    suspend fun deletePost(post: Post): Boolean {
+        var isSuccess = false
+        val task: Task<Void> = db.collection(COLLECTION_NAME).document(post.id)
+            .delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+                isSuccess = true
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error deleting document", e)
+            }
+        val deferredDataSnapshot: Deferred<Void> =
+            task.asDeferred()
+        val result: Void = deferredDataSnapshot.await()
+        return isSuccess
+    }
 
 }
