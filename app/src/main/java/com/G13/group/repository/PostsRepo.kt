@@ -74,6 +74,8 @@ class PostsRepo(
                                             documentChange.document.toObject(Post::class.java).comments
                                         dataSourceArrayList[i].caption =
                                             documentChange.document.toObject(Post::class.java).caption
+                                        dataSourceArrayList[i].username =
+                                            documentChange.document.toObject(Post::class.java).username
                                     } else {
                                         Log.d(TAG, "SyncPosts: did not find the post")
                                     }
