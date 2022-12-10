@@ -7,8 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +21,7 @@ import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Post
 import com.G13.group.repository.DataSource
 import com.G13.group.repository.PostsRepo
+import kotlinx.coroutines.launch
 
 
 class FeedFragment : Fragment(), IOnPostsListener {
@@ -97,6 +100,25 @@ class FeedFragment : Fragment(), IOnPostsListener {
         postArrayList = dataSource.dataSourcePostsArrayList
         Log.d(TAG, "postArrayList size: ${postArrayList.size}")
         postAdapter?.notifyDataSetChanged()
+    }
+
+    override fun onDeletePostListener(post: Post) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            var isdeleted = postsRepo.deletePost(post)
+            if (isdeleted) {
+                Toast.makeText(
+                    requireContext(),
+                    "Successfully deleted",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to delete the post",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     override fun onAttach(context: Context) {

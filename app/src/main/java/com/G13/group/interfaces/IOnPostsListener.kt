@@ -6,4 +6,6 @@ interface IOnPostsListener {
     fun onCommentsClickListener(post: Post)
 
     fun postsDataChangeListener()
+
+    fun onDeletePostListener(post: Post)
 }

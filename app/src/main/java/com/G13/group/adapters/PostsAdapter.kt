@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.G13.group.databinding.PostItemBinding
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Post
+import com.G13.group.repository.DataSource
 import com.bumptech.glide.Glide
 
 
@@ -24,11 +26,22 @@ class PostsAdapter(
     class PostViewHolder(val binding: PostItemBinding) : RecyclerView.ViewHolder(binding.root) {
         internal val TAG = "PostsAdapter"
 
+        var dataSource = DataSource.getInstance()
+
+        var currentUsername = dataSource.username
+
         @SuppressLint("SetTextI18n")
         fun bind(currentItem: Post, clickListener: IOnPostsListener) {
             // associate individual view with data
             binding.tvUsername.text = currentItem.username
             binding.tvCaption.text = currentItem.caption
+
+            if (currentItem.username == currentUsername) {
+                binding.tvDeletePost.visibility = View.VISIBLE
+            } else {
+                binding.tvDeletePost.visibility = View.GONE
+            }
+
             if (currentItem.comments.size == 0) {
                 binding.tvComments.text = "Add Comment"
             } else {
@@ -40,6 +53,10 @@ class PostsAdapter(
             binding.tvComments.setOnClickListener {
                 Log.d(TAG, "bind: ${currentItem.username} selected")
                 clickListener.onCommentsClickListener(currentItem)
+            }
+            binding.tvDeletePost.setOnClickListener {
+                Log.d(TAG, "bind: ${currentItem.username} selected")
+                clickListener.onDeletePostListener(currentItem)
             }
         }
     }
