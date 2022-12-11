@@ -7,14 +7,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.G13.group.R
 import com.G13.group.adapters.CommentsAdapter
 import com.G13.group.databinding.AddCommentDialogBinding
 import com.G13.group.databinding.FragmentCommentsBinding
+import com.G13.group.interfaces.IOnCommentListener
 import com.G13.group.models.Comment
 import com.G13.group.models.Post
 import com.G13.group.repository.CommentsRepo
@@ -22,7 +26,7 @@ import com.G13.group.repository.DataSource
 import kotlinx.coroutines.launch
 
 
-class CommentsFragment : Fragment() {
+class CommentsFragment : Fragment(), IOnCommentListener {
     val TAG: String = "COMMENTS-FRAGMENT"
     private var _binding: FragmentCommentsBinding? = null
     private val binding get() = _binding!!
@@ -43,6 +47,7 @@ class CommentsFragment : Fragment() {
         _binding = FragmentCommentsBinding.inflate(inflater, container, false)
         val view = binding.root
 
+
         if (args.post != null) {
             selectedPost = args.post!!
         }
@@ -60,7 +65,7 @@ class CommentsFragment : Fragment() {
 
         commentsArrayList = arrayListOf<Comment>()
 
-        commentAdapter = CommentsAdapter(view.context, commentsArrayList)
+        commentAdapter = CommentsAdapter(view.context, commentsArrayList, this)
         binding.rvComments.layoutManager = LinearLayoutManager(view.context)
         binding.rvComments.adapter = commentAdapter
 
@@ -78,6 +83,7 @@ class CommentsFragment : Fragment() {
         commentsRepo = CommentsRepo()
         commentsArrayList.clear()
 
+
         viewLifecycleOwner.lifecycleScope.launch {
             commentsRepo.getPostComments(selectedPost)
             commentsRepo.allComments.observe(requireActivity()) { comments ->
@@ -87,9 +93,11 @@ class CommentsFragment : Fragment() {
                         commentsArrayList.add(comment)
                     }
                 }
+
                 commentAdapter?.notifyDataSetChanged()
             }
         }
+
 
         binding.btnAddComment.setOnClickListener {
             addComment()
@@ -115,6 +123,60 @@ class CommentsFragment : Fragment() {
                         commentsRepo.addComment(selectedPost)
                     }
                     commentAdapter?.notifyDataSetChanged()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+        addDialog.show()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onDeleteCommentListener(comment: Comment) {
+        val addDialog = AlertDialog.Builder(requireContext())
+            .setTitle("Are you sure you want to delete your comment?")
+            .setPositiveButton("Delete") { dialog, which ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    Log.d(TAG, "index: ${commentsArrayList.indexOf(comment)}")
+                    val isDeleted = commentsRepo.deleteComment(
+                        selectedPost.id,
+                        commentsArrayList,
+                        commentsArrayList.indexOf(comment)
+                    )
+                    if (isDeleted) {
+                        Log.d(TAG, "index: ${commentsArrayList.indexOf(comment)}")
+                        commentAdapter?.notifyDataSetChanged()
+                        if (commentsArrayList.size == 0) {
+
+                            val fragmentManager =
+                                (activity as FragmentActivity).supportFragmentManager
+
+//                            fragmentManager.commit {
+////                                animate(
+////
+////                                )
+//                            }
+                            val fragmentTransaction = fragmentManager.beginTransaction()
+                            fragmentTransaction.setCustomAnimations(
+                                R.anim.slide_in_left,
+                                R.anim.slide_out_right,
+                                R.anim.slide_in_right,
+                                R.anim.slide_out_left,
+                            )
+                            fragmentTransaction.replace(R.id.fragment_container, FeedFragment())
+                            fragmentTransaction.commit()
+                        }
+                        Toast.makeText(
+                            requireContext(),
+                            "Successfully deleted",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to delete the comment",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
             .setNegativeButton("Cancel", null)

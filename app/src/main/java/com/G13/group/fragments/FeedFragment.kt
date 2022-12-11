@@ -17,9 +17,12 @@ import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.G13.group.R
 import com.G13.group.adapters.PostsAdapter
+import com.G13.group.databinding.AddCommentDialogBinding
 import com.G13.group.databinding.FragmentFeedBinding
 import com.G13.group.interfaces.IOnPostsListener
+import com.G13.group.models.Comment
 import com.G13.group.models.Post
+import com.G13.group.repository.CommentsRepo
 import com.G13.group.repository.DataSource
 import com.G13.group.repository.PostsRepo
 import kotlinx.coroutines.launch
@@ -69,8 +72,14 @@ class FeedFragment : Fragment(), IOnPostsListener {
         postsRepo = PostsRepo(this)
         postsRepo.syncPosts()
 
+
         Log.d(TAG, "feeding posts")
-//        postAdapter?.notifyDataSetChanged()
+        binding.rvPosts.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+            val layoutManager = binding.rvPosts.getLayoutManager() as LinearLayoutManager
+            var currentShowingPost = layoutManager.findLastVisibleItemPosition()
+            dataSource.currentShowingPost = currentShowingPost
+            Log.d(TAG, "setOnScrollChangeListener: ${dataSource.currentShowingPost}")
+        }
 
     }
 
@@ -81,18 +90,57 @@ class FeedFragment : Fragment(), IOnPostsListener {
 
     override fun onCommentsClickListener(post: Post) {
         Log.d(TAG, "item clicked ${post.username}")
+        if (post.comments.size == 0) {
+            val commentsRepo = CommentsRepo()
 
-        val options = navOptions {
-            anim {
-                enter = R.anim.slide_in_right
-                exit = R.anim.slide_out_left
-                popEnter = R.anim.slide_in_left
-                popExit = R.anim.slide_out_right
+            viewLifecycleOwner.lifecycleScope.launch {
+                // add comment
+                val dialogBinding = AddCommentDialogBinding.inflate(layoutInflater)
+                val addDialog = AlertDialog.Builder(requireContext())
+                    .setView(dialogBinding.root)
+                    .setPositiveButton("Add") { dialog, which ->
+                        val comment = dialogBinding.edtComment.text.toString().trim()
+                        if (comment.isBlank()) {
+                            Toast.makeText(
+                                requireContext(),
+                                "No comment added",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                postArrayList[postArrayList.indexOf(post)].comments.add(
+                                    Comment(
+                                        comment = comment,
+                                        username = dataSource.username
+                                    )
+                                )
+                                commentsRepo.addComment(postArrayList[postArrayList.indexOf(post)])
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Comment added successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .create()
+                addDialog.show()
             }
-        }
+            return
+        } else {
+            val options = navOptions {
+                anim {
+                    enter = R.anim.slide_in_right
+                    exit = R.anim.slide_out_left
+                    popEnter = R.anim.slide_in_left
+                    popExit = R.anim.slide_out_right
+                }
+            }
 
-        val action = FeedFragmentDirections.actionFeedFragmentToCommentsFragment(post)
-        findNavController().navigate(action, options)
+            val action = FeedFragmentDirections.actionFeedFragmentToCommentsFragment(post)
+            findNavController().navigate(action, options)
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -101,11 +149,12 @@ class FeedFragment : Fragment(), IOnPostsListener {
         postArrayList = dataSource.dataSourcePostsArrayList
         Log.d(TAG, "postArrayList size: ${postArrayList.size}")
         postAdapter?.notifyDataSetChanged()
+//        binding.rvPosts.smoothScrollToPosition(dataSource.currentShowingPost)
     }
 
     override fun onDeletePostListener(post: Post) {
         val addDialog = AlertDialog.Builder(requireContext())
-            .setTitle("Are you sure you want to delete your post")
+            .setTitle("Are you sure you want to delete your post?")
             .setPositiveButton("Delete") { dialog, which ->
                 viewLifecycleOwner.lifecycleScope.launch {
                     var isdeleted = postsRepo.deletePost(post)
