@@ -25,7 +25,6 @@ class CommentsRepo {
     var allComments: MutableLiveData<List<Comment>> = MutableLiveData<List<Comment>>()
 
     suspend fun getPostComments(post: Post) {
-        val commentsArrayList: ArrayList<Comment> = arrayListOf<Comment>()
 
         val docRef = db.collection(COLLECTION_NAME).document(post.id)
         val task = docRef.get().addOnSuccessListener { document ->
@@ -61,5 +60,32 @@ class CommentsRepo {
         } catch (ex: Exception) {
             Log.e(TAG, "addUserToDB: $ex")
         }
+    }
+
+    suspend fun deleteComment(
+        postId: String,
+        commentsList: ArrayList<Comment>,
+        commentIndex: Int
+    ): Boolean {
+        var isDeleted = false
+        Log.d(TAG, "deleteComment: deleting Comment Index: $commentIndex with postId: $postId")
+
+        val washingtonRef = db.collection(COLLECTION_NAME).document(postId)
+
+        commentsList.removeAt(commentIndex)
+
+        val task: Task<Void> = washingtonRef
+            .update("comments", commentsList)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully updated!")
+                isDeleted = true
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
+            }
+        val deferredDataSnapshot: Deferred<Void> =
+            task.asDeferred()
+        val result: Void = deferredDataSnapshot.await()
+        return isDeleted
     }
 }

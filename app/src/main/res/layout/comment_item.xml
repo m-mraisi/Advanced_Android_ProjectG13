@@ -3,38 +3,58 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_corner"
+            android:gravity="center"
+            android:maxLength="9"
+            android:padding="3dp"
+            android:text="@string/username"
+            android:textColor="@color/dark_gray"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_weight="0.3" />
+
+        <TextView
+            android:id="@+id/tv_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/comment_rounded_container"
+            android:maxLength="200"
+            android:padding="15dp"
+            android:scaleType="fitXY"
+            android:text="Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups."
+            android:textColor="@color/dark_gray"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
 
     <TextView
-        android:id="@+id/tv_username"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/rounded_corner"
-        android:gravity="center"
-        android:maxLength="9"
-        android:layout_gravity="center_vertical"
-        android:padding="3dp"
-        android:layout_margin="8dp"
-        android:textColor="@color/dark_gray"
-        android:text="@string/username"
-        android:textSize="9sp"
-        android:textStyle="bold"
-        app:layout_constraintHorizontal_weight="0.3" />
-
-    <TextView
-        android:id="@+id/tv_comment"
+        android:id="@+id/tv_delete_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/comment_rounded_container"
-        android:maxLength="200"
-        android:padding="15dp"
-        android:scaleType="fitXY"
-        android:layout_gravity="center_vertical"
-        android:text="Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups."
-        android:textColor="@color/dark_gray"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:layout_gravity="right"
+        android:layout_marginEnd="8dp"
+        android:text="Delete"
+        android:textColor="#D92025"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
 </LinearLayout>
