@@ -13,4 +13,15 @@ data class Post(
     override fun toString(): String {
         return "Post(id='$id', caption='$caption', imageId='$imageId', username='$username', comments=$comments)"
     }
+
+    fun toHashMap(): HashMap<String, Any> {
+        val map = hashMapOf<String, Any>(
+            "id" to id,
+            "caption" to caption,
+            "imageId" to imageId,
+            "username" to username,
+            "comments" to comments
+        )
+        return map
+    }
 }

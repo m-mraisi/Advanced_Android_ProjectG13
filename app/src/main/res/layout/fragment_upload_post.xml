@@ -53,12 +53,13 @@
         android:id="@+id/btn_upload_post"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="216dp"
+        android:layout_marginTop="148dp"
         android:backgroundTint="@color/light_blue"
         android:enabled="true"
         android:text="@string/upload_post"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edt_caption" />
 
