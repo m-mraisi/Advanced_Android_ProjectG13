@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.UploadPostFragment">
+
+    <TextView
+        android:id="@+id/tv_upload_post"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:gravity="center_horizontal"
+        android:text="@string/upload_post"
+        android:textColor="@color/dark_gray"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_upload_image"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
+        android:backgroundTint="#FF6A66"
+        android:enabled="true"
+        android:text="@string/upload_image"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_upload_post" />
+
+    <EditText
+        android:id="@+id/edt_caption"
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="47dp"
+        android:autofillHints="false"
+        android:gravity="start"
+        android:hint="@string/caption"
+        android:inputType="textMultiLine"
+        android:lines="7"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_upload_image" />
+
+    <Button
+        android:id="@+id/btn_upload_post"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="148dp"
+        android:backgroundTint="#FF6A66"
+        android:enabled="true"
+        android:text="@string/upload_post"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_caption" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="72dp"
+        android:tooltipText="Uploading Post..."
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/btn_upload_post"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
