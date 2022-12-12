@@ -10,9 +10,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.G13.group.R
 import com.G13.group.adapters.CommentsAdapter
@@ -147,23 +148,28 @@ class CommentsFragment : Fragment(), IOnCommentListener {
                         commentAdapter?.notifyDataSetChanged()
                         if (commentsArrayList.size == 0) {
 
-                            val fragmentManager =
-                                (activity as FragmentActivity).supportFragmentManager
+                            val options = navOptions {
+                                anim {
+                                    enter = R.anim.slide_in_left
+                                    exit = R.anim.slide_out_right
+                                    popEnter = R.anim.slide_in_right
+                                    popExit = R.anim.slide_out_left
+                                }
+                            }
 
-//                            fragmentManager.commit {
-////                                animate(
-////
-////                                )
-//                            }
-                            val fragmentTransaction = fragmentManager.beginTransaction()
-                            fragmentTransaction.setCustomAnimations(
-                                R.anim.slide_in_left,
-                                R.anim.slide_out_right,
-                                R.anim.slide_in_right,
-                                R.anim.slide_out_left,
-                            )
-                            fragmentTransaction.replace(R.id.fragment_container, FeedFragment())
-                            fragmentTransaction.commit()
+                            val previousFragmentName = dataSource.lastFragmentName
+
+                            Log.d(TAG, "current_destination: dataSource ${previousFragmentName}")
+
+                            if (previousFragmentName == "PROFILE-FRAGMENT") {
+                                val action =
+                                    CommentsFragmentDirections.actionCommentsFragmentToProfileFragment()
+                                findNavController().navigate(action, options)
+                            } else {
+                                val action =
+                                    CommentsFragmentDirections.actionCommentsFragmentToFeedFragment()
+                                findNavController().navigate(action, options)
+                            }
                         }
                         Toast.makeText(
                             requireContext(),

@@ -50,6 +50,9 @@
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile">
         <action
+            android:id="@+id/action_profileFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+        <action
             android:id="@+id/action_profileFragment_to_uploadPostFragment"
             app:destination="@id/uploadPostFragment" />
     </fragment>
@@ -61,6 +64,9 @@
         <action
             android:id="@+id/action_feedFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_uploadFragment"
+            app:destination="@id/uploadPostFragment" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -71,10 +77,20 @@
             android:name="post"
             app:argType="com.G13.group.models.Post"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_commentsFragment_to_feedFragment"
+            app:destination="@id/feedFragment" />
+        <action
+            android:id="@+id/action_commentsFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/uploadPostFragment"
         android:name="com.G13.group.fragments.UploadPostFragment"
         android:label="fragment_upload_post"
-        tools:layout="@layout/fragment_upload_post" />
+        tools:layout="@layout/fragment_upload_post">
+        <action
+            android:id="@+id/action_uploadPostFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
 </navigation>

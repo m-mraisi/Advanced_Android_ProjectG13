@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.tasks.asDeferred
+import java.util.*
 
 class UploadPostRepo() {
     private val TAG = "UPLOAD_POST_REPO"
@@ -22,6 +23,7 @@ class UploadPostRepo() {
     private val REQUEST_CODE = 100
     private val COLLECTION_NAME = "posts"
     private var uploadedImageUrl: String? = null
+    private val dataSource = DataSource.getInstance()
 
     fun uploadImage(requestCode: Int, resultCode: Int, data: Intent?, context: Context?) {
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
@@ -36,7 +38,8 @@ class UploadPostRepo() {
         }
     }
 
-    suspend fun uploadPost(caption: String, username: String) {
+    suspend fun uploadPost(caption: String, username: String): Boolean {
+        var isPosted = false
         if (uploadedImageUrl != null) {
             val postMap =
                 Post(
@@ -48,6 +51,7 @@ class UploadPostRepo() {
                 db.collection(COLLECTION_NAME)
                     .add(postMap).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+                        isPosted = true
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error adding document", e)
@@ -56,11 +60,12 @@ class UploadPostRepo() {
                 task.asDeferred()
             val result: DocumentReference = deferredDataSnapshot.await()
         }
+        return isPosted
     }
 
     private fun uploadImageToStorage(imageData: Uri) {
         val storageRef = storage.reference
-        val mountainsRef = storageRef.child("mountains.jpg")
+        val mountainsRef = storageRef.child("${dataSource.username}-${UUID.randomUUID()}.jpg")
         val uploadTask = mountainsRef.putFile(imageData)
 
         uploadTask.addOnFailureListener {
