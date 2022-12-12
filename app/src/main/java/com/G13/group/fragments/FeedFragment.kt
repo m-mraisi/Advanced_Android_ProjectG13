@@ -61,7 +61,6 @@ class FeedFragment : Fragment(), IOnPostsListener {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
