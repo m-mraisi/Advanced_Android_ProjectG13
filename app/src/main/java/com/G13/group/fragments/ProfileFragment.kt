@@ -27,6 +27,7 @@ import com.G13.group.repository.AuthRepo
 import com.G13.group.repository.CommentsRepo
 import com.G13.group.repository.DataSource
 import com.G13.group.repository.PostsRepo
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment(), IOnPostsListener {
@@ -71,7 +72,8 @@ class ProfileFragment : Fragment(), IOnPostsListener {
         binding.logoutBtn.setOnClickListener {
             authRepo.logoutUser()
             removeUserFromSharedPrefs()
-            val navigateToSignIn = ProfileFragmentDirections.actionProfileFragmentToLoginFragment()
+            activity?.findViewById<BottomNavigationItemView>(R.id.feedFragment)?.performClick()
+            val navigateToSignIn = FeedFragmentDirections.actionFeedFragmentToLoginFragment()
             findNavController().navigate(navigateToSignIn)
         }
 

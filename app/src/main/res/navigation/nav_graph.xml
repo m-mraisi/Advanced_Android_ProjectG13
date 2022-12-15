@@ -59,8 +59,8 @@
             android:id="@+id/action_profileFragment_to_uploadPostFragment"
             app:destination="@id/uploadPostFragment" />
         <action
-            android:id="@+id/action_profileFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/action_profileFragment_to_feedFragment"
+            app:destination="@id/feedFragment" />
     </fragment>
     <fragment
         android:id="@+id/feedFragment"
@@ -73,6 +73,9 @@
         <action
             android:id="@+id/action_feedFragment_to_uploadFragment"
             app:destination="@id/uploadPostFragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
