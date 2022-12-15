@@ -68,4 +68,12 @@ class AuthRepo() {
             wasSuccess
         }
     }
+
+    fun logoutUser() {
+        try {
+            mAuth.signOut()
+        } catch (e: FirebaseException) {
+            Log.d(TAG, "logoutUser: Signout on firebse failed")
+        }
+    }
 }

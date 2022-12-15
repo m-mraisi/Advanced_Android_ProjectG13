@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,6 +23,7 @@ import com.G13.group.databinding.FragmentProfileBinding
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Comment
 import com.G13.group.models.Post
+import com.G13.group.repository.AuthRepo
 import com.G13.group.repository.CommentsRepo
 import com.G13.group.repository.DataSource
 import com.G13.group.repository.PostsRepo
@@ -32,6 +34,7 @@ class ProfileFragment : Fragment(), IOnPostsListener {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var postsRepo: PostsRepo
+    private lateinit var authRepo: AuthRepo
     var postAdapter: PostsAdapter? = null
     lateinit var postArrayList: ArrayList<Post>
     lateinit var dataSource: DataSource
@@ -43,7 +46,7 @@ class ProfileFragment : Fragment(), IOnPostsListener {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         dataSource = DataSource.getInstance()
 
-
+        authRepo = AuthRepo()
 
         postArrayList = dataSource.dataSourcePostsArrayList
 
@@ -65,6 +68,21 @@ class ProfileFragment : Fragment(), IOnPostsListener {
 
         binding.tvUsername.text = dataSource.username
         binding.tvUsernamePic.text = dataSource.username
+        binding.logoutBtn.setOnClickListener {
+            authRepo.logoutUser()
+            removeUserFromSharedPrefs()
+            val navigateToSignIn = ProfileFragmentDirections.actionProfileFragmentToLoginFragment()
+            findNavController().navigate(navigateToSignIn)
+        }
+
+    }
+
+    private fun removeUserFromSharedPrefs() {
+        val prefs = requireContext().getSharedPreferences(
+            requireContext().toString(),
+            AppCompatActivity.MODE_PRIVATE
+        )
+        prefs.edit().remove("USER_USERNAME").apply()
 
     }
 

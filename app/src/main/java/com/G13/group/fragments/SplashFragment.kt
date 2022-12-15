@@ -30,7 +30,7 @@ class SplashFragment : Fragment() {
 
         dataSource = DataSource.getInstance()
 
-        (activity as AppCompatActivity).supportActionBar?.hide()
+//        (activity as AppCompatActivity).supportActionBar?.hide()
 
         val prefs = requireContext().getSharedPreferences(
             requireContext().toString(),
