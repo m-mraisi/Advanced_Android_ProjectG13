@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.navOptions
 import com.G13.group.R
 import com.G13.group.databinding.FragmentUploadPostBinding
 import com.G13.group.repository.DataSource
@@ -71,17 +70,11 @@ class UploadPostFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-
-                val options = navOptions {
-                    anim {
-                        enter = R.anim.slide_in_left
-                        exit = R.anim.slide_out_right
-                        popEnter = R.anim.slide_in_right
-                        popExit = R.anim.slide_out_left
-                    }
-                }
-                activity?.findViewById<BottomNavigationItemView>(R.id.profileFragment)
-                    ?.performClick()
+                val bottomProfileBtn =
+                    activity?.findViewById<BottomNavigationItemView>(R.id.feedFragment)
+                bottomProfileBtn?.isSoundEffectsEnabled = false
+                bottomProfileBtn?.performClick()
+                bottomProfileBtn?.isSoundEffectsEnabled = true
             }
 
         }

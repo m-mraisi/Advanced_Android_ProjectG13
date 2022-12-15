@@ -20,9 +20,10 @@ open class DataSource {
 
     var dataSourcePostsArrayList: ArrayList<Post> = arrayListOf()
     var dataSourcePostsArrayListPersonal: ArrayList<Post> = arrayListOf()
-    var username = "Mahmoud"
+    var username = ""
     var currentShowingPost = 0
     var lastFragmentName = ""
+    var email = ""
 
 //    var selectedLessonPosition:Int? = null
 

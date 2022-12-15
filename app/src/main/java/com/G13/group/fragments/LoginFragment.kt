@@ -66,7 +66,7 @@ class LoginFragment : Fragment() {
                             if (binding.cbRememberMe.isChecked) {
                                 saveToPrefs(email, password, username)
                             } else {
-                                saveToPrefs(null, null, username)
+                                saveToPrefs(email, null, username)
                             }
 
                             val options = navOptions {
@@ -144,13 +144,16 @@ class LoginFragment : Fragment() {
         return validData
     }
 
-    private fun saveToPrefs(email: String? = null, password: String? = null, username: String) {
-        prefs.edit().putString("USER_EMAIL", email).apply()
-        prefs.edit().putString("USER_PASSWORD", password).apply()
+    private fun saveToPrefs(email: String, password: String? = null, username: String) {
+        if (password != null) {
+            prefs.edit().putString("USER_EMAIL", email).apply()
+            prefs.edit().putString("USER_PASSWORD", password).apply()
+        }
 
         prefs.edit().putString("USER_USERNAME", username).apply()
 
         dataSource.username = username
+        dataSource.email = email
     }
 
     override fun onAttach(context: Context) {

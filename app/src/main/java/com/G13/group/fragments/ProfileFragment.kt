@@ -67,14 +67,22 @@ class ProfileFragment : Fragment(), IOnPostsListener {
 
         binding.tvUsername.text = dataSource.username
         binding.tvUsernamePic.text = dataSource.username
+        binding.tvDescription.text = dataSource.email
         binding.logoutBtn.setOnClickListener {
             authRepo.logoutUser()
             removeUserFromSharedPrefs()
-            activity?.findViewById<BottomNavigationItemView>(R.id.feedFragment)?.performClick()
-            val navigateToSignIn = FeedFragmentDirections.actionFeedFragmentToLoginFragment()
-            findNavController().navigate(navigateToSignIn)
+            goToSignInScreen()
         }
 
+    }
+
+    private fun goToSignInScreen() {
+        val bottomProfileBtn = activity?.findViewById<BottomNavigationItemView>(R.id.feedFragment)
+        bottomProfileBtn?.isSoundEffectsEnabled = false
+        bottomProfileBtn?.performClick()
+        bottomProfileBtn?.isSoundEffectsEnabled = true
+        val navigateToSignIn = FeedFragmentDirections.actionFeedFragmentToLoginFragment()
+        findNavController().navigate(navigateToSignIn)
     }
 
     private fun removeUserFromSharedPrefs() {
