@@ -48,7 +48,7 @@ class LoginFragment : Fragment() {
         usersRepo = UsersRepo() // initialize UsersRepo
         dataSource = DataSource.getInstance()
         prefs = requireContext().getSharedPreferences(
-            requireContext().toString(),
+            "SHARED_PREFS",
             androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
         )
 

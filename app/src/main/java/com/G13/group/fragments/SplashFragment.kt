@@ -33,7 +33,7 @@ class SplashFragment : Fragment() {
 //        (activity as AppCompatActivity).supportActionBar?.hide()
 
         val prefs = requireContext().getSharedPreferences(
-            requireContext().toString(),
+            "SHARED_PREFS",
             AppCompatActivity.MODE_PRIVATE
         )
 
@@ -44,10 +44,7 @@ class SplashFragment : Fragment() {
             val goToOnboardingFragment =
                 SplashFragmentDirections.actionSplashFragmentToBoardingFragment()
             findNavController().navigate(goToOnboardingFragment)
-            with(prefs.edit()) {
-                this.putBoolean("IS_FIRST_TIME", false)
-                apply()
-            }
+            prefs.edit().putBoolean("IS_FIRST_TIME", false).apply()
         } else if (username != "") {
             dataSource.username = username!!
             val goToFeedFragment = SplashFragmentDirections.actionSplashFragmentToFeedFragment()

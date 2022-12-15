@@ -79,7 +79,7 @@ class ProfileFragment : Fragment(), IOnPostsListener {
 
     private fun removeUserFromSharedPrefs() {
         val prefs = requireContext().getSharedPreferences(
-            requireContext().toString(),
+            "SHARED_PREFS",
             AppCompatActivity.MODE_PRIVATE
         )
         prefs.edit().remove("USER_USERNAME").apply()
