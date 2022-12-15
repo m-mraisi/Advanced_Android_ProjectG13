@@ -3,6 +3,7 @@ package com.G13.group.repository
 import android.util.Log
 import com.G13.group.models.User
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -34,8 +35,8 @@ class UsersRepo {
                         Log.d(TAG, "addUserToDB - added document: $doc")
                         userRes = "success"
                     }.addOnFailureListener { ex ->
-                    Log.d(TAG, "addUserToDB: $ex")
-                }
+                        Log.d(TAG, "addUserToDB: $ex")
+                    }
             val deferredDataSnapshot: Deferred<Void> =
                 task.asDeferred()
             val result: Void = deferredDataSnapshot.await()
@@ -69,5 +70,32 @@ class UsersRepo {
         val deferredDataSnapshot: kotlinx.coroutines.Deferred<QuerySnapshot> = task.asDeferred()
         val data: QuerySnapshot = deferredDataSnapshot.await()
         return found
+    }
+
+    suspend fun getUsernameFromUId(uid: String): String? {
+        try {
+            var username: String? = null
+
+            val task: Task<DocumentSnapshot> =
+                db.collection(COLLECTION_NAME).document(uid)
+                    .get()
+                    .addOnSuccessListener { snapshot ->
+                        if (snapshot.exists()) {
+                            username = snapshot.data?.get("username") as String?
+                            Log.d(TAG, "getUsernameFromUId: ${snapshot.data}")
+                        }
+                        Log.d(TAG, "getUsernameFromUId outside: ${snapshot.data}")
+                    }.addOnFailureListener {
+                        username = null
+                    }
+            val deferredDataSnapshot: Deferred<DocumentSnapshot> =
+                task.asDeferred()
+            val result: DocumentSnapshot = deferredDataSnapshot.await()
+
+            return username
+        } catch (ex: Exception) {
+            Log.e(TAG, "addUserToDB: $ex")
+            return null
+        }
     }
 }
