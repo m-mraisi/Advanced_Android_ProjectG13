@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.G13.group.R
 import com.G13.group.databinding.FragmentUploadPostBinding
 import com.G13.group.repository.DataSource
 import com.G13.group.repository.UploadPostRepo
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import kotlinx.coroutines.launch
 
 class UploadPostFragment : Fragment() {
@@ -80,10 +80,8 @@ class UploadPostFragment : Fragment() {
                         popExit = R.anim.slide_out_left
                     }
                 }
-
-                val action =
-                    UploadPostFragmentDirections.actionUploadPostFragmentToProfileFragment()
-                findNavController().navigate(action, options)
+                activity?.findViewById<BottomNavigationItemView>(R.id.profileFragment)
+                    ?.performClick()
             }
 
         }

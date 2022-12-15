@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.tasks.asDeferred
 
 class AuthRepo() {
@@ -33,13 +33,13 @@ class AuthRepo() {
         return userUID
     }
 
-    suspend fun signIn(context: Context, email: String, password: String): Boolean {
-        var validate = false
+    suspend fun signIn(context: Context, email: String, password: String): String? {
+        var signedInUserUId: String? = null
         try {
             val task: Task<AuthResult> = mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        validate = true
+                        signedInUserUId = task.result?.user?.uid
                     } else {
                         Toast.makeText(context, "Invalid email and password.", Toast.LENGTH_SHORT)
                             .show()
@@ -47,13 +47,33 @@ class AuthRepo() {
                 }
             val deferredDataSnapshot: kotlinx.coroutines.Deferred<AuthResult> = task.asDeferred()
             deferredDataSnapshot.await()
-        } catch (e: FirebaseAuthInvalidUserException) {
+        } catch (e: FirebaseException) {
             Log.d(TAG, "signIn: ${e.cause?.message}")
         }
-        return validate
+        return signedInUserUId
     }
 
-    suspend fun getSignedInUser() {
-//        mAuth.currentUser.
+    suspend fun sendResetPasswordLink(email: String): Boolean {
+        var wasSuccess: Boolean = false
+        return try {
+            val task = mAuth.sendPasswordResetEmail(email).addOnSuccessListener {
+                wasSuccess = true
+            }.addOnFailureListener {
+                Log.e(TAG, "sendResetPasswordLink: ${it.cause?.message}")
+            }
+            task.asDeferred().await()
+            wasSuccess
+        } catch (e: FirebaseException) {
+            Log.e(TAG, "sendResetPasswordLink: ${e.cause?.message}")
+            wasSuccess
+        }
+    }
+
+    fun logoutUser() {
+        try {
+            mAuth.signOut()
+        } catch (e: FirebaseException) {
+            Log.d(TAG, "logoutUser: Signout on firebse failed")
+        }
     }
 }

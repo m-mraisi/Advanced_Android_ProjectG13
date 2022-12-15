@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "current_destination: profile ${destination.id == R.id.profileFragment}")
             Log.d(TAG, "current_destination: feed ${destination.id == R.id.feedFragment}")
             when (destination.id) {
+                R.id.splashFragment -> this.supportActionBar?.hide()
                 R.id.profileFragment -> {
                     showBottomNav()
                     dataSource.lastFragmentName = "PROFILE-FRAGMENT"
@@ -112,11 +113,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun showBottomNav() {
         binding.bottomNavigationView.visibility = View.VISIBLE
+        this.supportActionBar?.show()
 
     }
 
     private fun hideBottomNav() {
         binding.bottomNavigationView.visibility = View.GONE
+        this.supportActionBar?.show()
 
     }
 

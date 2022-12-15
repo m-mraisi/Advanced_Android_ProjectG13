@@ -24,4 +24,5 @@
     <string name="upload_post">Upload Post</string>
     <string name="upload_image">Upload Image</string>
     <string name="caption">Caption</string>
+    <string name="reset_password">Reset Password</string>
 </resources>

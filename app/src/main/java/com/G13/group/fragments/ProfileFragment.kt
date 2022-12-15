@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,9 +23,11 @@ import com.G13.group.databinding.FragmentProfileBinding
 import com.G13.group.interfaces.IOnPostsListener
 import com.G13.group.models.Comment
 import com.G13.group.models.Post
+import com.G13.group.repository.AuthRepo
 import com.G13.group.repository.CommentsRepo
 import com.G13.group.repository.DataSource
 import com.G13.group.repository.PostsRepo
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment(), IOnPostsListener {
@@ -32,6 +35,7 @@ class ProfileFragment : Fragment(), IOnPostsListener {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var postsRepo: PostsRepo
+    private lateinit var authRepo: AuthRepo
     var postAdapter: PostsAdapter? = null
     lateinit var postArrayList: ArrayList<Post>
     lateinit var dataSource: DataSource
@@ -43,7 +47,7 @@ class ProfileFragment : Fragment(), IOnPostsListener {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         dataSource = DataSource.getInstance()
 
-
+        authRepo = AuthRepo()
 
         postArrayList = dataSource.dataSourcePostsArrayList
 
@@ -61,10 +65,24 @@ class ProfileFragment : Fragment(), IOnPostsListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         binding.tvUsername.text = dataSource.username
         binding.tvUsernamePic.text = dataSource.username
+        binding.logoutBtn.setOnClickListener {
+            authRepo.logoutUser()
+            removeUserFromSharedPrefs()
+            activity?.findViewById<BottomNavigationItemView>(R.id.feedFragment)?.performClick()
+            val navigateToSignIn = FeedFragmentDirections.actionFeedFragmentToLoginFragment()
+            findNavController().navigate(navigateToSignIn)
+        }
+
+    }
+
+    private fun removeUserFromSharedPrefs() {
+        val prefs = requireContext().getSharedPreferences(
+            "SHARED_PREFS",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        prefs.edit().remove("USER_USERNAME").apply()
 
     }
 
