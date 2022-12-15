@@ -65,8 +65,6 @@ class ProfileFragment : Fragment(), IOnPostsListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         binding.tvUsername.text = dataSource.username
         binding.tvUsernamePic.text = dataSource.username
         binding.logoutBtn.setOnClickListener {
